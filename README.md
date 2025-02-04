@@ -2,7 +2,7 @@
 
 # content
 
- `t-photos` Contains photos of the team
+- `t-photos` Contains photos of the team
 - `v-photos` contains photos of the vehicle
 - `video` contains the `video.md` file with the link to a video where a driving demonstration exists.
 - `schemes` contains several schematics of the electric design 
