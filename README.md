@@ -2,17 +2,12 @@
 
 # content
 
-'codes' Stores the source code files used in the project.
-
-'models' Contains project-related models, such as 3D models, mathematical models, or machine learning models.
-
-'schemes' Includes schematics, diagrams, or blueprints used in the project development.
-
-'t-photos' Folder for test photos, prototypes, or early-stage iterations.
-
-'v-photos' Stores final images or advanced versions of the project.
-
-'videos' Contains recordings related to the project, such as demonstrations, tests, or video documentation.
+ `t-photos` Contains photos of the team
+- `v-photos` contains photos of the vehicle
+- `video` contains the `video.md` file with the link to a video where a driving demonstration exists.
+- `schemes` contains several schematics of the electric design 
+- `src` contains the control software code for all components programmed to participate in the competition.
+- `models` is for files used by 3D printers, laser cutting machines, and CNC machines to produce vehicle elements. If there is nothing to add to this location, the directory can be removed.
 
 
 
