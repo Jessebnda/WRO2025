@@ -1,22 +1,15 @@
 import time
 import cv2
-from vision import Vision  # Importamos la clase Vision
+from vision import Vision
 
 class CarController:
     def __init__(self, cam_index=0):
-        """
-        Inicializa la clase CarController, conectándose a Vision y estableciendo el estado inicial.
-        """
+        """Inicializa el controlador del carrito y la visión."""
         self.vision = Vision(cam_index)
         self.state = "driving"
 
     def decide_action(self, positions, frame_width):
-        """
-        Decide la acción del carro en función de la posición del obstáculo más cercano.
-        - Prioriza los objetos más grandes (suponiendo que están más cerca).
-        """
-        print("DEBUG: Positions received ->", positions, flush=True)  # Depuración
-
+        """Decide la acción basada en la posición del objeto detectado."""
         def get_largest_object(objects):
             return max(objects, key=lambda obj: obj[2] * obj[3]) if objects else None
 
@@ -25,24 +18,22 @@ class CarController:
         obj = red_obj if red_obj else green_obj
 
         if obj:
-            x, y, w, h = obj
-            obstacle_center = x + w / 2
-            if obstacle_center < frame_width / 2:
+            x, y, w, h, position_value = obj
+            if red_obj:
                 action = "turn_right"
             else:
                 action = "turn_left"
-            color_detected = "Red" if obj == red_obj else "Green"
+            color_detected = "Red" if red_obj else "Green"
         else:
             action = "drive_straight"
+            position_value = 0
             color_detected = "None"
 
-        print(f"Detected: {color_detected} | Action: {action}", flush=True)
+        print(f"Detected: {color_detected} | Position: {position_value} | Action: {action}", flush=True)
         return action
 
     def control_motors(self, action):
-        """
-        Simula el control de los motores con `time.sleep()` para ralentizar las impresiones.
-        """
+        """Simula el control de los motores y agrega una pausa para evitar spam en la terminal."""
         print("DEBUG: control_motors called with action ->", action, flush=True)
         if action == "drive_straight":
             print("Motors: driving straight", flush=True)
@@ -55,4 +46,4 @@ class CarController:
         else:
             print("Motors: unknown action", flush=True)
 
-        time.sleep(1.5)  # Ajusta este tiempo según lo que necesites
+        time.sleep(1.5)  # Control de tiempo para evitar impresión rápida
