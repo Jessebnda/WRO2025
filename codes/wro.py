@@ -10,17 +10,12 @@ def run_car(cam_index=0):
             print("DEBUG: No frame captured", flush=True)
             break
 
-        # Get processed frame, masks, and detected positions
         processed_frame, masks, positions = car.vision.process_frame(frame)
-
-        # Get action decision
         action = car.decide_action(positions, frame.shape[1])
         car.control_motors(action)
-
-        # Show processed frame with bounding boxes
         cv2.imshow("Car Controller Vision", processed_frame)
 
-        if cv2.waitKey(1) & 0xFF == 27:  # Press ESC to exit
+        if cv2.waitKey(1) & 0xFF == 27:
             break
 
     car.vision.cap.release()
