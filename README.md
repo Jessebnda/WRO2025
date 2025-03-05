@@ -8,6 +8,7 @@
 - `schemes` contains several schematics of the electric design 
 - `src` contains the control software code for all components programmed to participate in the competition.
 - `models` is for files used by 3D printers, laser cutting machines, and CNC machines to produce vehicle elements. If there is nothing to add to this location, the directory can be removed.
+- 'p-photos' solution planning process
 
 
 
