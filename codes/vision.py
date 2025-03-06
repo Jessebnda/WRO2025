@@ -5,6 +5,8 @@ class Vision:
     def __init__(self, cam_index=0):
         """Initializes the camera and sets up color detection parameters."""
         self.cap = cv2.VideoCapture(cam_index)
+        self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)  # Ajusta el ancho
+        self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)  # Ajusta la altura
         self.kernel = np.ones((5, 5), np.uint8)
 
         # **Traffic Signs (Red & Green)**

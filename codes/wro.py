@@ -1,8 +1,9 @@
 import cv2
 from control import CarController
 
-def run_car(cam_index=0):
+def run_car(cam_index=0, process_every_n_frames=5):
     car = CarController(cam_index)
+    frame_count = 0  # Contador de frames
 
     while True:
         ret, frame = car.vision.cap.read()
@@ -10,12 +11,19 @@ def run_car(cam_index=0):
             print("DEBUG: No frame captured", flush=True)
             break
 
-        processed_frame, masks, positions = car.vision.process_frame(frame)
-        action = car.decide_action(positions, frame.shape[1])
-        car.control_motors(action)
-        cv2.imshow("Car Controller Vision", processed_frame)
+        # Procesar solo cada 'n' frames
+        if frame_count % process_every_n_frames == 0:
+            processed_frame, masks, positions = car.vision.process_frame(frame)
+            action = car.decide_action(positions, frame.shape[1])
+            car.control_motors(action)
+            cv2.imshow("Car Controller Vision", processed_frame)
+        else:
+            # Si no es un frame de procesamiento, solo mostrar el frame sin procesar
+            cv2.imshow("Car Controller Vision", frame)
 
-        if cv2.waitKey(1) & 0xFF == 27:
+        frame_count += 1  # Incrementar contador de frames
+
+        if cv2.waitKey(1) & 0xFF == 27:  # Salir con ESC
             break
 
     car.vision.cap.release()
