@@ -32,11 +32,10 @@ def run_car():
         # Alternar cámara cada SWITCH_CAMERA_FRAMES frames
         if frame_count % SWITCH_CAMERA_FRAMES == 0:
             current_cam = (current_cam + 1) % len(CAMERAS)  # Cambiar cámara
+            # Recreate the Vision object to ensure proper initialization of the new camera
             car.vision.cap.release()
-            car.vision.cap = cv2.VideoCapture(CAMERAS[current_cam])
-            car.vision.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
-            car.vision.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
-            print(f" Cambiando a cámara {current_cam}")
+            car.vision = Vision(CAMERAS[current_cam])
+            print(f"Cambiando a cámara {current_cam}")
 
         # Procesar triángulos cada PROCESS_EVERY_N_FRAMES frames
         if frame_count % PROCESS_EVERY_N_FRAMES == 0:
