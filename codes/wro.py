@@ -1,14 +1,6 @@
 import cv2
-import RPi.GPIO as GPIO
 from control import CarController
-
-# Pines GPIO para la señal a Arduino (opcional)
-RED_PIN = 17
-GREEN_PIN = 27
-
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(RED_PIN, GPIO.OUT)
-GPIO.setup(GREEN_PIN, GPIO.OUT)
+from vision import Vision
 
 # Lista de índices de cámaras disponibles (ajusta según tu hardware)
 CAMERAS = [0, 1]
@@ -40,23 +32,15 @@ def run_car():
         # Procesar triángulos cada PROCESS_EVERY_N_FRAMES frames
         if frame_count % PROCESS_EVERY_N_FRAMES == 0:
             processed_frame, masks, positions = car.vision.process_frame(frame)
-
-            # Detectar rojo y verde para enviar señal a Arduino
-            red_detected = len(positions["Red"]) > 0
-            green_detected = len(positions["Green"]) > 0
-            GPIO.output(RED_PIN, GPIO.HIGH if red_detected else GPIO.LOW)
-            GPIO.output(GREEN_PIN, GPIO.HIGH if green_detected else GPIO.LOW)
-
             cv2.imshow("Car Controller Vision", processed_frame)
         else:
-            cv2.imshow("Car Controller Vision", frame)  # Mostrar sin procesar
+            cv2.imshow("Car Controller Vision", frame)
 
         frame_count += 1
 
         if cv2.waitKey(1) & 0xFF == 27:  # Salir con ESC
             break
 
-    GPIO.cleanup()
     car.vision.cap.release()
     cv2.destroyAllWindows()
 
