@@ -27,32 +27,48 @@ class Vision:
             "Blue": (255, 0, 0),
             "Orange": (0, 165, 255)
         }
+        
+        # Temporal detection counter for each color and threshold definition
+        self.detect_counter = {color: 0 for color in self.color_map.keys()}
+        self.THRESHOLD = 3  # Number of continuous frames required to confirm detection
 
     def process_color(self, frame, mask, color_name):
-        """Finds contours, applies edge detection, and returns positions."""
+        """Finds contours, applies edge detection, and returns positions.
+           Only draws bounding boxes if detection is confirmed over several frames."""
         mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, self.kernel)
-        edges = cv2.Canny(mask, 50, 150)  # **Apply Edge Detection**
+        edges = cv2.Canny(mask, 50, 150)  # Apply edge detection
         contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         objects = []
         
+        detected = False
         for cnt in contours:
             area = cv2.contourArea(cnt)
             if area > 500:  # Ignore small noise
                 x, y, w, h = cv2.boundingRect(cnt)
                 objects.append((x, y, w, h))
+                detected = True
 
-                # **Draw bounding box on frame**
+        # Update temporal counter: increment if detected, reset otherwise
+        if detected:
+            self.detect_counter[color_name] += 1
+        else:
+            self.detect_counter[color_name] = 0
+
+        # Draw bounding boxes only if confirmed detection is above threshold
+        if self.detect_counter[color_name] >= self.THRESHOLD:
+            for (x, y, w, h) in objects:
                 cv2.rectangle(frame, (x, y), (x + w, y + h), self.color_map[color_name], 2)
-                cv2.putText(frame, color_name, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.6, self.color_map[color_name], 2)
-
+                cv2.putText(frame, color_name, (x, y - 10),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.6, self.color_map[color_name], 2)
         return objects
 
     def process_frame(self, frame):
-        """Detects colors, draws bounding boxes, and returns masks & detected objects."""
+        """Detects colors, draws bounding boxes (with temporal filtering), 
+           and returns masks & detected objects."""
         frame = cv2.flip(frame, 1)
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
-        # **Generate Masks**
+        # Generate masks for each color.
         masks = {
             "Red": cv2.inRange(hsv, self.lower_red1, self.upper_red1) | cv2.inRange(hsv, self.lower_red2, self.upper_red2),
             "Green": cv2.inRange(hsv, self.lower_green, self.upper_green),
