@@ -63,4 +63,4 @@ class CarController:
         if color != "None":
             print(f"Motors: {action} (Based on {color} at X={x_position})", flush=True)
         else:
-            print(f"Motors: {action} (No relevant color detected)", flush=True)
+            print(f"Motors: {action}", flush=True)
