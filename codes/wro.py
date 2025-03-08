@@ -3,6 +3,8 @@ from control import CarController
 
 def run_car(cam_index=0):
     car = CarController(cam_index)
+    frame_skip = 2  # Procesa cada 2 frames
+    frame_count = 0
 
     while True:
         ret, frame = car.vision.cap.read()
@@ -10,10 +12,13 @@ def run_car(cam_index=0):
             print("DEBUG: No frame captured", flush=True)
             break
 
-        processed_frame, masks, positions = car.vision.process_frame(frame)
-        action = car.decide_action(positions, frame.shape[1])
-        car.control_motors(action)
-        cv2.imshow("Car Controller Vision", processed_frame)
+        if frame_count % frame_skip == 0:  # Procesa solo cada 2 frames
+            processed_frame, positions = car.vision.process_frame(frame)
+            action = car.decide_action(positions, frame.shape[1])
+            car.control_motors(action)
+            cv2.imshow("Car Controller Vision", processed_frame)
+
+        frame_count += 1
 
         if cv2.waitKey(1) & 0xFF == 27:
             break
