@@ -7,12 +7,11 @@ class Vision:
         self.cap = cv2.VideoCapture(cam_index)
         self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)  # Mejor resolución para Raspberry Pi
         self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
-        self.kernel = np.ones((3, 3), np.uint8)  # Se reduce de (5,5) a (3,3) para eficiencia
 
-        # Rango de colores HSV
+        # Definir los rangos de colores en HSV
         self.lower_red1, self.upper_red1 = np.array([0, 150, 100]), np.array([10, 255, 255])
         self.lower_red2, self.upper_red2 = np.array([170, 150, 100]), np.array([180, 255, 255])
-        self.lower_green,self.upper_green = np.array([40, 80, 50]), np.array([80, 255, 255])
+        self.lower_green, self.upper_green = np.array([40, 80, 50]), np.array([80, 255, 255])
         self.lower_pink, self.upper_pink = np.array([140, 100, 100]), np.array([170, 255, 255])
         self.lower_blue, self.upper_blue = np.array([100, 150, 50]), np.array([130, 255, 255])
         self.lower_orange, self.upper_orange = np.array([10, 150, 100]), np.array([25, 255, 255])
@@ -30,7 +29,7 @@ class Vision:
         if np.sum(mask) < 10000:  # Si hay pocos píxeles, omitir procesamiento
             return []
 
-        mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, self.kernel)
+        mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, np.ones((3, 3), np.uint8))  # Elimina ruido
         gray = cv2.GaussianBlur(mask, (3, 3), 0)  # Suavizar antes de Canny
         edges = cv2.Canny(gray, 50, 150)
 
@@ -39,11 +38,11 @@ class Vision:
 
         for cnt in contours:
             area = cv2.contourArea(cnt)
-            if area > 1000:  # Se aumentó el umbral para evitar ruido
+            if area > 1000:  # Umbral para eliminar ruido
                 x, y, w, h = cv2.boundingRect(cnt)
                 objects.append((x, y, w, h))
 
-                # Dibujar caja delimitadora
+                # Dibujar caja delimitadora y texto del color
                 cv2.rectangle(frame, (x, y), (x + w, y + h), self.color_map[color_name], 2)
                 cv2.putText(frame, color_name, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.6, self.color_map[color_name], 2)
 
@@ -51,10 +50,10 @@ class Vision:
 
     def process_frame(self, frame):
         """Detecta colores y devuelve las posiciones sin procesar toda la imagen después."""
-        frame = cv2.flip(frame, 1)
+        frame = cv2.flip(frame, 1)  # Voltear la imagen horizontalmente
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
-        # Máscaras de color
+        # Crear las máscaras de cada color
         masks = {
             "Red": cv2.inRange(hsv, self.lower_red1, self.upper_red1) | cv2.inRange(hsv, self.lower_red2, self.upper_red2),
             "Green": cv2.inRange(hsv, self.lower_green, self.upper_green),
@@ -67,4 +66,4 @@ class Vision:
         for color in masks.keys():
             positions[color] = self.process_color(frame, masks[color], color)
 
-        return frame, positions  # Eliminamos las máscaras si ya no son necesarias
+        return frame, positions  # Retorna el frame procesado y las posiciones de los objetos detectados
