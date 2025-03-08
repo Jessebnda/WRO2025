@@ -3,7 +3,7 @@ from control import CarController
 
 def run_car(cam_index=0):
     car = CarController(cam_index)
-    frame_skip = 5  # Procesa cada 2 frames
+    frame_skip = 2  # Procesa cada 2 frames
     frame_count = 0
 
     while True:
@@ -14,8 +14,8 @@ def run_car(cam_index=0):
 
         if frame_count % frame_skip == 0:  # Procesa solo cada 2 frames
             processed_frame, positions = car.vision.process_frame(frame)
-            action = car.decide_action(positions, frame.shape[1])
-            car.control_motors(action)
+            action, color, x_position = car.decide_action(positions, frame.shape[1])
+            car.control_motors(action, color, x_position)
             cv2.imshow("Car Controller Vision", processed_frame)
 
         frame_count += 1

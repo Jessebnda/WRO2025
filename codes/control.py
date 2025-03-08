@@ -21,14 +21,18 @@ class CarController:
         return None, None
 
     def decide_action(self, positions, frame_width):
-        """Decide qué acción tomar basado en la detección de colores."""
+        """Decide qué acción tomar basado en los colores detectados y devuelve la acción, el color y la posición X."""
+        detected_colors = positions.keys()  # Solo procesar los colores detectados
+
+        # Obtener los objetos más grandes de cada color
         red_obj, red_x = self.get_largest_object(positions.get("Red", []))
         green_obj, green_x = self.get_largest_object(positions.get("Green", []))
         blue_obj, blue_x = self.get_largest_object(positions.get("Blue", []))
         orange_obj, orange_x = self.get_largest_object(positions.get("Orange", []))
         pink_obj, pink_x = self.get_largest_object(positions.get("Pink", []))
 
-        if blue_obj and not self.prev_blue_detected:  
+        # Comportamientos especiales según el color detectado
+        if blue_obj and not self.prev_blue_detected:
             self.blue_count += 1
             print(f"Iniciar vuelta (Blue detected at X={blue_x}) - Blue Count: {self.blue_count}", flush=True)
 
@@ -44,11 +48,19 @@ class CarController:
 
         if self.lap_count >= 3 and pink_obj:
             print(f"Estacionarse (Pink detected at X={pink_x} after 3 laps)", flush=True)
-            return "Estacionarse"
+            return "Estacionarse", "Pink", pink_x
 
-        action = "turn_right" if red_obj else "turn_left" if green_obj else "drive_straight"
-        return action
+        # Seleccionar la acción basada en los colores detectados
+        if red_obj:
+            return "turn_right", "Red", red_x
+        elif green_obj:
+            return "turn_left", "Green", green_x
+        else:
+            return "drive_straight", "None", None  # Ningún color relevante detectado
 
-    def control_motors(self, action):
-        """Simula el control de los motores."""
-        print(f"Motors: {action}", flush=True)
+    def control_motors(self, action, color, x_position):
+        """Simula el control de los motores y muestra qué color está determinando la acción."""
+        if color != "None":
+            print(f"Motors: {action} (Based on {color} at X={x_position})", flush=True)
+        else:
+            print(f"Motors: {action} (No relevant color detected)", flush=True)

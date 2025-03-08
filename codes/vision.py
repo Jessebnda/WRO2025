@@ -49,11 +49,11 @@ class Vision:
         return objects
 
     def process_frame(self, frame):
-        """Detecta colores y devuelve las posiciones sin procesar toda la imagen después."""
-        frame = cv2.flip(frame, 1)  # Voltear la imagen horizontalmente
+        """Detecta colores y devuelve las posiciones de los objetos sin procesar máscaras vacías."""
+        frame = cv2.flip(frame, 1)
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
-        # Crear las máscaras de cada color
+        # Crear las máscaras de color
         masks = {
             "Red": cv2.inRange(hsv, self.lower_red1, self.upper_red1) | cv2.inRange(hsv, self.lower_red2, self.upper_red2),
             "Green": cv2.inRange(hsv, self.lower_green, self.upper_green),
@@ -63,7 +63,12 @@ class Vision:
         }
 
         positions = {}
-        for color in masks.keys():
-            positions[color] = self.process_color(frame, masks[color], color)
 
-        return frame, positions  # Retorna el frame procesado y las posiciones de los objetos detectados
+        # Solo procesar colores si la máscara tiene suficiente información
+        for color, mask in masks.items():
+            if np.sum(mask) > 10000:  # Solo procesar si hay suficientes píxeles detectados
+                positions[color] = self.process_color(frame, mask, color)
+
+        return frame, positions  # Retorna solo los colores detectados
+
+        
