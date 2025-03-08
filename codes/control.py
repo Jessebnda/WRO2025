@@ -2,7 +2,11 @@ import time
 import cv2
 from vision import Vision
 
+
 class CarController:
+    cont=0
+    oldAction=""
+    oldColor = ""
     def __init__(self, cam_index=0):
         """Inicializa el controlador del carro y la visión."""
         self.vision = Vision(cam_index)
@@ -58,12 +62,18 @@ class CarController:
         else:
             return "drive_straight", "None", None  # Ningún color relevante detectado
 
-        ''' def control_motors(self, action, color, x_position):
-        """Simula el control de los motores y muestra qué color está determinando la acción."""
-        if color != "None":
-            print(f"Motors: {action} (Based on {color} at X={x_position})", flush=True)
-            cont=0
-        elif cont==0:
-            
+    def control_motors(self, action, color, x_position):
+        """Simula el control de los motores y muestra qué color está determinando la acción solo una vez."""
+        
+        if action == CarController.oldAction and color == CarController.oldColor:
+            if color != "None":  # Solo imprime X si hay un color detectado
+                print(f"X={x_position}")
+        else:
+            if color != "None":
+                print(f"Motors: {action} (Based on {color} at X={x_position})", flush=True)
+            else:
                 print(f"Motors: {action}", flush=True)
-                cont==1'''
+
+            CarController.cont = 0  # Restablece cont
+            CarController.oldAction = action  # Guarda la nueva acción
+            CarController.oldColor = color  # Guarda el nuevo color
