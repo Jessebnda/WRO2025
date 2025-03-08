@@ -58,9 +58,12 @@ class CarController:
         else:
             return "drive_straight", "None", None  # Ningún color relevante detectado
 
-    def control_motors(self, action, color, x_position):
+        ''' def control_motors(self, action, color, x_position):
         """Simula el control de los motores y muestra qué color está determinando la acción."""
         if color != "None":
             print(f"Motors: {action} (Based on {color} at X={x_position})", flush=True)
-        else:
-            print(f"Motors: {action}", flush=True)
+            cont=0
+        elif cont==0:
+            
+                print(f"Motors: {action}", flush=True)
+                cont==1'''
