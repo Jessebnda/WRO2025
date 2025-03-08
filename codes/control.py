@@ -7,6 +7,7 @@ class CarController:
     cont=0
     oldAction=""
     oldColor = ""
+    oldX = None 
     def __init__(self, cam_index=0):
         """Inicializa el controlador del carro y la visión."""
         self.vision = Vision(cam_index)
@@ -66,10 +67,11 @@ class CarController:
         """Simula el control de los motores y muestra qué color está determinando la acción solo una vez."""
         
         if action == CarController.oldAction and color == CarController.oldColor:
-            if color != "None":  # Solo imprime X si hay un color detectado
+            if color != "None" and x_position != CarController.oldX:  # Solo imprime X si hay un color detectado
                 print(f"X={x_position}")
+                CarController.oldX = x_position 
         else:
-            if color != "None":
+            if color != "None" :
                 print(f"Motors: {action} (Based on {color} at X={x_position})", flush=True)
             else:
                 print(f"Motors: {action}", flush=True)
@@ -77,3 +79,4 @@ class CarController:
             CarController.cont = 0  # Restablece cont
             CarController.oldAction = action  # Guarda la nueva acción
             CarController.oldColor = color  # Guarda el nuevo color
+            CarController.oldX = x_position 
