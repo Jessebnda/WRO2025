@@ -12,16 +12,16 @@ class Vision:
         self.lower_red1, self.upper_red1 = np.array([0, 150, 100]), np.array([10, 255, 255])
         self.lower_red2, self.upper_red2 = np.array([170, 150, 100]), np.array([180, 255, 255])
         self.lower_green, self.upper_green = np.array([40, 80, 50]), np.array([80, 255, 255])
-        self.lower_pink, self.upper_pink = np.array([140, 100, 100]), np.array([170, 255, 255])
-        self.lower_blue, self.upper_blue = np.array([100, 150, 50]), np.array([130, 255, 255])
-        self.lower_orange, self.upper_orange = np.array([10, 150, 100]), np.array([25, 255, 255])
+        #self.lower_pink, self.upper_pink = np.array([140, 100, 100]), np.array([170, 255, 255])
+        #self.lower_blue, self.upper_blue = np.array([100, 150, 50]), np.array([130, 255, 255])
+        #self.lower_orange, self.upper_orange = np.array([10, 150, 100]), np.array([25, 255, 255])
 
         self.color_map = {  
             "Red": (0, 0, 255),
             "Green": (0, 255, 0),
-            "Pink": (255, 0, 255),
-            "Blue": (255, 0, 0),
-            "Orange": (0, 165, 255)
+            #"Pink": (255, 0, 255),
+            #"Blue": (255, 0, 0),
+            #"Orange": (0, 165, 255)
         }
 
     def process_color(self, frame, mask, color_name):
@@ -57,9 +57,9 @@ class Vision:
         masks = {
             "Red": cv2.inRange(hsv, self.lower_red1, self.upper_red1) | cv2.inRange(hsv, self.lower_red2, self.upper_red2),
             "Green": cv2.inRange(hsv, self.lower_green, self.upper_green),
-            "Pink": cv2.inRange(hsv, self.lower_pink, self.upper_pink),
-            "Blue": cv2.inRange(hsv, self.lower_blue, self.upper_blue),
-            "Orange": cv2.inRange(hsv, self.lower_orange, self.upper_orange)
+            #"Pink": cv2.inRange(hsv, self.lower_pink, self.upper_pink),
+            #"Blue": cv2.inRange(hsv, self.lower_blue, self.upper_blue),
+            #"Orange": cv2.inRange(hsv, self.lower_orange, self.upper_orange)
         }
 
         positions = {}

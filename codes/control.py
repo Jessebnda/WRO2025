@@ -32,12 +32,12 @@ class CarController:
         # Obtener los objetos más grandes de cada color
         red_obj, red_x = self.get_largest_object(positions.get("Red", []))
         green_obj, green_x = self.get_largest_object(positions.get("Green", []))
-        blue_obj, blue_x = self.get_largest_object(positions.get("Blue", []))
-        orange_obj, orange_x = self.get_largest_object(positions.get("Orange", []))
-        pink_obj, pink_x = self.get_largest_object(positions.get("Pink", []))
+        #blue_obj, blue_x = self.get_largest_object(positions.get("Blue", []))
+        #orange_obj, orange_x = self.get_largest_object(positions.get("Orange", []))
+        #pink_obj, pink_x = self.get_largest_object(positions.get("Pink", []))
 
         # Comportamientos especiales según el color detectado
-        if blue_obj and not self.prev_blue_detected:
+        '''if blue_obj and not self.prev_blue_detected:
             self.blue_count += 1
             print(f"Iniciar vuelta (Blue detected at X={blue_x}) - Blue Count: {self.blue_count}", flush=True)
 
@@ -53,7 +53,7 @@ class CarController:
 
         if self.lap_count >= 3 and pink_obj:
             print(f"Estacionarse (Pink detected at X={pink_x} after 3 laps)", flush=True)
-            return "Estacionarse", "Pink", pink_x
+            return "Estacionarse", "Pink", pink_x'''
 
         # Seleccionar la acción basada en los colores detectados
         if red_obj:
