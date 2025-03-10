@@ -14,8 +14,8 @@ class Vision:
                     (np.array([170, 150, 100]), np.array([180, 255, 255]))],
             "Green": [(np.array([40, 80, 50]), np.array([80, 255, 255]))],
             "Pink": [(np.array([140, 100, 100]), np.array([170, 255, 255]))],
-            #"Blue": [(np.array([100, 150, 50]), np.array([130, 255, 255]))],
-            #"Orange": [(np.array([10, 150, 100]), np.array([25, 255, 255]))]
+            "Blue": [(np.array([100, 150, 50]), np.array([130, 255, 255]))],
+            "Orange": [(np.array([10, 150, 100]), np.array([25, 255, 255]))]
         }
 
         self.kernel = np.ones((3, 3), np.uint8)  # Kernel más pequeño para eficiencia
