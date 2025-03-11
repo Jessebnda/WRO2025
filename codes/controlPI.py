@@ -4,7 +4,8 @@ from vision import Vision
 import RPi.GPIO as GPIO
 import serial
 
-ser = serial.Serial('/dev/ttyUSB0', 115200)
+ser = serial.Serial('/dev/ttyUSB0', 115200,timeout=1)
+time.sleep(2)
 GPIO.setmode(GPIO.BCM)
 output_pin = 17
 GPIO.setup(output_pin, GPIO.OUT)
@@ -82,16 +83,17 @@ class CarController:
                 print(f"Motors: {action} (Based on {color} at X={x_position})", flush=True)
                 if color=="Green":
                     GPIO.output(output_pin, GPIO.HIGH)  # Fixed GPI → GPIO
-                    message = f"{x_position}\n"
-                    ser.write(message.encode())
+                    message = x_position
+                    ser.write(f"{message}\n".encode())
                 else:
                     GPIO.output(output_pin, GPIO.LOW)  # Fixed GPI → GPIO
             else:
                 print(f"Motors: {action}", flush=True)
                 GPIO.output(output_pin, GPIO.LOW)
                 x_position = 700
-                message = f"{x_position}\n"
-                ser.write(message.encode())
+                message = x_position
+                ser.write(f"{message}\n".encode())
+                
 
             CarController.cont = 0  # Restablece cont
             CarController.oldAction = action  # Guarda la nueva acción
