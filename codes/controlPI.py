@@ -1,6 +1,14 @@
 import time
 import cv2
 from vision import Vision
+import RPi.GPIO as GPIO
+import serial
+
+ser = serial.Serial('/dev/ttyUSB0', 115200,timeout=1)
+time.sleep(2)
+GPIO.setmode(GPIO.BCM)
+output_pin = 17
+GPIO.setup(output_pin, GPIO.OUT)
 
 
 class CarController:
@@ -23,7 +31,7 @@ class CarController:
             x, y, w, h = largest
             center_x = x + w // 2
             return largest, center_x
-        return None, None
+        return None, None 
 
     def decide_action(self, positions, frame_width):
         """Decide qué acción tomar basado en los colores detectados y devuelve la acción, el color y la posición X."""
@@ -73,11 +81,21 @@ class CarController:
         else:
             if color != "None" :
                 print(f"Motors: {action} (Based on {color} at X={x_position})", flush=True)
-                
+                if color=="Green":
+                    GPIO.output(output_pin, GPIO.HIGH)  # Fixed GPI → GPIO
+                    message = x_position
+                    ser.write(f"{message}\n".encode())
+                else:
+                    GPIO.output(output_pin, GPIO.LOW)  # Fixed GPI → GPIO
             else:
                 print(f"Motors: {action}", flush=True)
+                GPIO.output(output_pin, GPIO.LOW)
+                x_position = 700
+                message = x_position
+                ser.write(f"{message}\n".encode())
+                
 
             CarController.cont = 0  # Restablece cont
             CarController.oldAction = action  # Guarda la nueva acción
             CarController.oldColor = color  # Guarda el nuevo color
-            CarController.oldX = x_position 
+            CarController.oldX = x_position
