@@ -2,8 +2,9 @@ import time
 import cv2
 from vision import Vision
 import RPi.GPIO as GPIO
+import serial
 
-
+ser = serial.Serial('/dev/ttyUSB0', 15200)
 GPIO.setmode(GPIO.BCM)
 output_pin = 17
 GPIO.setup(output_pin, GPIO.OUT)
@@ -70,6 +71,7 @@ class CarController:
             return "drive_straight", "None", None  # Ningún color relevante detectado
 
     def control_motors(self, action, color, x_position):
+        message="f{x_position}\n"
         """Simula el control de los motores y muestra qué color está determinando la acción solo una vez."""
         
         if action == CarController.oldAction and color == CarController.oldColor:
@@ -81,12 +83,16 @@ class CarController:
                 print(f"Motors: {action} (Based on {color} at X={x_position})", flush=True)
                 if color=="Green":
                     GPI.output(output_pin,GPIO.HIGH)
-                    time.sleep(1)
-                    GPI.output(output_pin,GPIO.LOW)
 
-                time.sleep(0.5)
+                    ser.write(message.encode())
+                   
+                else:
+                    GPI.output(output_pin,GPIO.LOW)
             else:
                 print(f"Motors: {action}", flush=True)
+                x_position = 700
+                message=f"{x_position}\n"
+                ser.write(message.encode())
 
             CarController.cont = 0  # Restablece cont
             CarController.oldAction = action  # Guarda la nueva acción
