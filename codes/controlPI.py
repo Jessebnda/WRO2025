@@ -78,6 +78,12 @@ class CarController:
             if color != "None" and x_position != CarController.oldX:  # Solo imprime X si hay un color detectado
                 print(f"X={x_position}")
                 CarController.oldX = x_position 
+                ser.write(f"{x_position}\n".encode())
+                respuesta = ser.readline().decode().strip()
+                    
+                if respuesta:
+                        print(f"respuesta: {respuesta}")
+                        
         else:
             if color != "None" :
                 print(f"Motors: {action} (Based on {color} at X={x_position})", flush=True)
