@@ -84,7 +84,12 @@ class CarController:
                 if color=="Green":
                     GPIO.output(output_pin, GPIO.HIGH)  # Fixed GPI → GPIO
                     message = x_position
-                    ser.write(f"{message}\n".encode())
+                    ser.write(f"{x_position}\n".encode())
+                    respuesta = ser.readline().decode().strip()
+                    
+                    if respuesta:
+                        print(f"respuesta: {respuesta}")
+                        
                 else:
                     GPIO.output(output_pin, GPIO.LOW)  # Fixed GPI → GPIO
             else:
@@ -92,7 +97,11 @@ class CarController:
                 GPIO.output(output_pin, GPIO.LOW)
                 x_position = 700
                 message = x_position
-                ser.write(f"{message}\n".encode())
+                ser.write(f"{x_position}\n".encode())
+                respuesta = ser.readline().decode().strip()
+                    
+                if respuesta:
+                    print(f"respuesta: {respuesta}")
                 
 
             CarController.cont = 0  # Restablece cont
