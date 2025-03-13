@@ -31,7 +31,6 @@ class Vision:
             x, y, w, h = cv2.boundingRect(cnt)
             if 0.5 < w/h < 2 and w > 10 and h > 20:  # Filtrar solo rectángulos
                 rectangles.append((x, y, w, h))
-                cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 255, 255), 2)
         
         return rectangles
 
@@ -47,14 +46,21 @@ class Vision:
         for x, y, w, h in rectangles:
             roi = hsv[y:y+h, x:x+w]
             avg_color = np.mean(roi, axis=(0, 1))  # Obtener color promedio
+            detected_color = None
             
             for color, ranges in self.color_ranges.items():
                 for lower, upper in ranges:
                     if np.all(lower <= avg_color) and np.all(avg_color <= upper):
-                        if color not in positions:
-                            positions[color] = []
-                        positions[color].append((x, y, w, h))
-                        cv2.putText(frame, color, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 2)
+                        detected_color = color
                         break
+                if detected_color:
+                    break
+            
+            if detected_color:
+                if detected_color not in positions:
+                    positions[detected_color] = []
+                positions[detected_color].append((x, y, w, h))
+                cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 255, 255), 2)
+                cv2.putText(frame, detected_color, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 2)
         
         return frame, positions

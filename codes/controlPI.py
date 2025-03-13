@@ -1,6 +1,6 @@
 import time
 import cv2
-from vision_2 import Vision
+from vision import Vision
 import RPi.GPIO as GPIO
 import serial
 

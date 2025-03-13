@@ -1,5 +1,5 @@
 import cv2
-from controlPI import CarController
+from control import CarController
 
 def run_car(cam_index=0):
     car = CarController(cam_index)
